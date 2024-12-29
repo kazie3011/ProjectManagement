@@ -1,0 +1,86 @@
+@page "/estimations"
+@attribute [StreamRendering]
+
+<PageTitle>Estimations</PageTitle>
+
+<h3>Estimations</h3>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Estimation Name</th>
+        <th>Project Name</th>
+        <th>Total Man-Months</th>
+        <th>Duration</th>
+        <th>Effort PM</th>
+        <th>Effort Developer</th>
+        <th>Effort Tester</th>
+        <th>Effort Comtor</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var estimation in _estimations)
+    {
+        <tr>
+            <td>@estimation.Id</td>
+            <td>@estimation.EstimationName</td>
+            <td>@estimation.ProjectName</td>
+            <td>@estimation.TotalManMonths</td>
+            <td>@estimation.Duration</td>
+            <td>@estimation.EffortPM</td>
+            <td>@estimation.EffortDeveloper</td>
+            <td>@estimation.EffortTester</td>
+            <td>@estimation.EffortCommunicator</td>
+            <td>@estimation.TotalCost</td>
+            <td>
+                <button class="btn">Edit</button>
+                <button class="btn">Detail</button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    private readonly List<Estimation> _estimations = [];
+
+    protected override Task OnInitializedAsync()
+    {
+        var estimationNames = new[] { "Website Development", "Mobile App Creation", "Data Analysis"};
+        for (var i = 1; i <= 5; i++)
+        {
+            var estimation = new Estimation
+            {
+                Id = i,
+                EstimationName = estimationNames[Random.Shared.Next(estimationNames.Length)],
+                ProjectName = $"Project Name {i}",
+                TotalManMonths = Random.Shared.Next(5, 20),
+                Duration = Random.Shared.Next(1, 10),
+                EffortPM = Random.Shared.Next(1, 5),
+                EffortDeveloper = Random.Shared.Next(1, 10),
+                EffortTester = Random.Shared.Next(1, 5),
+                EffortCommunicator = Random.Shared.Next(1, 3),
+                TotalCost = Random.Shared.Next(1, 50) * 100000 
+            };
+            _estimations.Add(estimation);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private class Estimation
+    {
+        public int Id { get; init; }
+        public required string EstimationName { get; init; }
+        public required string ProjectName { get; init; }
+        public int TotalManMonths { get; init; }
+        public int Duration { get; init; }
+        public int EffortPM { get; init; }
+        public int EffortDeveloper { get; init; }
+        public int EffortTester { get; init; }
+        public int EffortCommunicator { get; init; }
+        public decimal TotalCost { get; init; }
+    }
+}

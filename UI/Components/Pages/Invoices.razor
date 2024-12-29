@@ -1,0 +1,95 @@
+@page "/invoices"
+@attribute [StreamRendering]
+
+<PageTitle>Invoices</PageTitle>
+
+<h3>Invoices</h3>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>PO Id</th>
+        <th>Project Name</th>
+        <th>Customer</th>
+        <th>Description</th>
+        <th>Amount</th>
+        <th>Date Issued</th>
+        <th>Due Date</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var invoice in _invoices)
+    {
+    <tr>
+        <td>@invoice.Id</td>
+        <td>@invoice.ProjectName</td>
+        <td>@invoice.Customer</td>
+        <td>@invoice.Description</td>
+        <td>@invoice.Amount</td>
+        <td>@invoice.IssuedDate</td>
+        <td>@invoice.DueDate</td>
+        <td>@invoice.Status</td>
+        <td>
+            <button class="btn">Edit</button>
+            <button class="btn">Detail</button>
+        </td>
+    </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    private readonly List<Invoice> _invoices = [];
+
+    protected override Task OnInitializedAsync()
+    {
+        var startDate = DateOnly.FromDateTime(DateTime.Now);
+        var descriptions = new[] { "Website Development", "Mobile App Creation", "Data Analysis"};
+        var statuses = new[] { "Draft", "Sent", "Paid", "Unpaid", "Partially", "Overdue", "Cancelled", "Refunded", "Disputed", "Pending Approval" };
+        for (var i = 1; i <= 5; i++)
+        {
+            var invoice = new Invoice
+            {
+                Id = $"INV{i:D3}",
+                ProjectName = $"Project Name {i}",
+                Customer = $"Customer {i}",
+                Description = descriptions[Random.Shared.Next(descriptions.Length)],
+                Amount = Random.Shared.Next(8, 20) * 10000,
+                IssuedDate = startDate.AddDays(Random.Shared.Next(5)),
+                DueDate = startDate.AddDays(Random.Shared.Next(10) + 10),
+                Status = statuses[Random.Shared.Next(statuses.Length)],
+            };
+            _invoices.Add(invoice);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private class Invoice
+    {
+        public required string Id { get; init; }
+        public required string ProjectName { get; init; }
+        public required string Customer { get; init; }
+        public string? Description { get; init; }
+        public decimal Amount { get; init; }
+        public DateOnly IssuedDate { get; init; }
+        public DateOnly DueDate { get; init; }
+        public required string Status { get; init; }
+    }
+    
+    private enum InvoiceStatus
+    {
+        Draft,
+        Sent,
+        Paid,
+        Unpaid,
+        Partially,
+        Overdue,
+        Cancelled,
+        Refunded,
+        Disputed,
+        PendingApproval
+    }
+}

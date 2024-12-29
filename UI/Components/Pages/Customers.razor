@@ -1,0 +1,99 @@
+@page "/customers"
+@attribute [StreamRendering]
+@using Bogus;
+
+<PageTitle>Customers</PageTitle>
+
+<h3>Customers</h3>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Customer ID</th>
+        <th>Customer Name</th>
+        <th>Company</th>
+        <th>Address</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th>Representative</th>
+        <th>Date Added</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var customer in _customers)
+    {
+    <tr>
+        <td>@customer.Id</td>
+        <td>@customer.Name</td>
+        <td>@customer.Company</td>
+        <td>@customer.Address</td>
+        <td>@customer.Phone</td>
+        <td>@customer.Email</td>
+        <td>@customer.Representative</td>
+        <td>@customer.AddedDate</td>
+        <td>@customer.Status</td>
+        <td>
+            <button class="btn">Edit</button>
+            <button class="btn">Detail</button>
+        </td>
+    </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    private readonly List<Customer> _customers = [];
+
+    protected override Task OnInitializedAsync()
+    {
+        var startDate = DateOnly.FromDateTime(DateTime.Now);
+        var statuses = new[] { "Active", "Inactive", "Prospect", "On Hold", "Archived", "Blacklisted", "Pending Verification", "VIP" };
+        for (var i = 1; i <= 5; i++)
+        {
+            var faker = new Faker();
+            var name = faker.Name.FullName();
+            var customer = new Customer
+            {
+                Id = $"C{i:D3}",
+                Name = name,
+                Company = faker.Company.CompanyName(),
+                Address = faker.Address.StreetName(),
+                Phone = faker.Phone.PhoneNumber(),
+                Email = $"{name.ToLower().Replace(" ", "")}{Random.Shared.Next(1, 100)}@gmail.com",
+                Representative = $"Rep {i}",
+                AddedDate = startDate.AddDays(-Random.Shared.Next(10)),
+                Status = statuses[Random.Shared.Next(statuses.Length)],
+            };
+            _customers.Add(customer);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private class Customer
+    {
+        public required string Id { get; init; }
+        public required string Name { get; init; }
+        public required string Company { get; init; }
+        public string? Address { get; init; }
+        public string? Phone { get; init; }
+        public string? Email { get; init; }
+        public string? Representative { get; init; }
+        public required DateOnly AddedDate { get; init; }
+        public required string Status { get; init; }
+    }
+    
+    private enum CustomerStatus
+    {
+        Active,
+        Inactive,
+        Prospect,
+        OnHold,
+        Archived,
+        Blacklisted,
+        PendingVerification,
+        VIP
+    }
+}

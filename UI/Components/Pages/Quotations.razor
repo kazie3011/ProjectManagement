@@ -1,0 +1,90 @@
+@page "/quotations"
+@attribute [StreamRendering]
+
+<PageTitle>Quotations</PageTitle>
+
+<h3>Quotations</h3>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Project Name</th>
+        <th>Description</th>
+        <th>Amount</th>
+        <th>Date Issued</th>
+        <th>Status</th>
+        <th>Customer</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var quotation in _quotations)
+    {
+        <tr>
+            <td>@quotation.Id</td>
+            <td>@quotation.ProjectName</td>
+            <td>@quotation.Description</td>
+            <td>@quotation.Amount</td>
+            <td>@quotation.IssuedDate</td>
+            <td>@quotation.Status</td>
+            <td>@quotation.Customer</td>
+            <td>
+                <button class="btn">Edit</button>
+                <button class="btn">Detail</button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    private readonly List<Quotation> _quotations = [];
+
+    protected override Task OnInitializedAsync()
+    {
+        var startDate = DateOnly.FromDateTime(DateTime.Now);
+        var descriptions = new[] { "Website Development", "Mobile App Creation", "Data Analysis"};
+        var statuses = new[] { "Draft", "Sent", "Accepted", "Rejected", "Pending", "Revised", "Expired", "Cancelled" };
+        for (var i = 1; i <= 5; i++)
+        {
+            var quotation = new Quotation
+            {
+                Id = $"Q{i:D3}",
+                ProjectName = $"Project Name {i}",
+                Description = descriptions[Random.Shared.Next(descriptions.Length)],
+                Amount = Random.Shared.Next(8, 20) * 10000,
+                IssuedDate = startDate.AddDays(Random.Shared.Next(5)),
+                Status = statuses[Random.Shared.Next(statuses.Length)],
+                Customer = $"Customer {i}",
+            };
+            _quotations.Add(quotation);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private class Quotation
+    {
+        public required string Id { get; init; }
+        public required string ProjectName { get; init; }
+        public string? Description { get; init; }
+        public decimal Amount { get; init; }
+        public DateOnly IssuedDate { get; init; }
+        public required string Status { get; init; }
+        public required string Customer { get; init; }
+
+    }
+
+    private enum QuotationStatus
+    {
+        Draft,
+        Sent,
+        Accepted,
+        Rejected,
+        Pending,
+        Revised,
+        Expired,
+        Cancelled
+    }
+}

@@ -1,0 +1,90 @@
+@page "/purchase-orders"
+@attribute [StreamRendering]
+
+<PageTitle>Purchase Orders</PageTitle>
+
+<h3>Purchase Orders</h3>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>PO Id</th>
+        <th>Project Name</th>
+        <th>Customer</th>
+        <th>Description</th>
+        <th>Amount</th>
+        <th>Date Issued</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var purchaseOrder in _purchaseOrders)
+    {
+    <tr>
+        <td>@purchaseOrder.Id</td>
+        <td>@purchaseOrder.ProjectName</td>
+        <td>@purchaseOrder.Customer</td>
+        <td>@purchaseOrder.Description</td>
+        <td>@purchaseOrder.Amount</td>
+        <td>@purchaseOrder.IssuedDate</td>
+        <td>@purchaseOrder.Status</td>
+        <td>
+            <button class="btn">Edit</button>
+            <button class="btn">Detail</button>
+        </td>
+    </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    private readonly List<PurchaseOrder> _purchaseOrders = [];
+
+    protected override Task OnInitializedAsync()
+    {
+        var startDate = DateOnly.FromDateTime(DateTime.Now);
+        var descriptions = new[] { "Website Development", "Mobile App Creation", "Data Analysis"};
+        var statuses = new[] { "Draft", "Sent", "Pending Signature", "Signed", "Rejected", "Cancelled", "Amended", "Completed", "Expired" };
+        for (var i = 1; i <= 5; i++)
+        {
+            var purchaseOrder = new PurchaseOrder
+            {
+                Id = $"PO{i:D3}",
+                ProjectName = $"Project Name {i}",
+                Customer = $"Customer {i}",
+                Description = descriptions[Random.Shared.Next(descriptions.Length)],
+                Amount = Random.Shared.Next(8, 20) * 10000,
+                IssuedDate = startDate.AddDays(Random.Shared.Next(5)),
+                Status = statuses[Random.Shared.Next(statuses.Length)],
+            };
+            _purchaseOrders.Add(purchaseOrder);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private class PurchaseOrder
+    {
+        public required string Id { get; init; }
+        public required string ProjectName { get; init; }
+        public required string Customer { get; init; }
+        public string? Description { get; init; }
+        public decimal Amount { get; init; }
+        public DateOnly IssuedDate { get; init; }
+        public required string Status { get; init; }
+    }
+    
+    private enum PurchaseOrderStatus
+    {
+        Draft,
+        Sent,
+        PendingSignature,
+        Signed,
+        Rejected,
+        Cancelled,
+        Amended,
+        Completed,
+        Expired
+    }
+}

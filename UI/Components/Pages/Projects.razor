@@ -1,0 +1,84 @@
+@page "/projects"
+@attribute [StreamRendering]
+
+<PageTitle>Projects</PageTitle>
+
+<h3>Projects</h3>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Project Name</th>
+        <th>Customer Name</th>
+        <th>Status</th>
+        <th>Revenue</th>
+        <th>Profit</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var project in _projects)
+    {
+        <tr>
+            <td>@project.Id</td>
+            <td>@project.ProjectName</td>
+            <td>@project.CustomerName</td>
+            <td>@project.Status</td>
+            <td>@project.Revenue</td>
+            <td>@project.Profit</td>
+            <td>
+                <button class="btn">Edit</button>
+                <button class="btn">Detail</button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    private readonly List<Project> _projects = [];
+
+    protected override Task OnInitializedAsync()
+    {
+        var statuses = new[] { "Not Started", "In Progress", "On Hold", "Pending Approval", "Completed", "Cancelled", "Delayed", "Under Review", "Archived" };
+        for (var i = 1; i <= 10; i++)
+        {
+            var addedProject = new Project
+            {
+                Id = i,
+                ProjectName = $"Project Name {i}",
+                CustomerName = $"Customer Name {i}",
+                Status = statuses[Random.Shared.Next(statuses.Length)],
+                Revenue = 1000000,
+                Profit = 200000
+            };
+            _projects.Add(addedProject);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private class Project
+    {
+        public int Id { get; init; }
+        public required string ProjectName { get; init; }
+        public required string CustomerName { get; init; }
+        public required string Status { get; init; }
+        public decimal Revenue { get; init; }
+        public decimal Profit { get; init; }
+    }
+
+    private enum ProjectStatus
+    {
+        NotStarted,
+        InProgress,
+        OnHold,
+        PendingApproval,
+        Completed,
+        Cancelled,
+        Delayed,
+        UnderReview,
+        Archived
+    }   
+}
