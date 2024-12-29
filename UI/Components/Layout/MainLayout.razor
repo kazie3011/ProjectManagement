@@ -1,29 +1,55 @@
-﻿@using BlazorBootstrap
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-    </div>
+<BlazorBootstrapLayout StickyHeader="true">
+    <HeaderSection>
+        <NavLink class="nav-link" href="settings">
+            <Tooltip Title="Setting" role="button">
+                <Icon Name="IconName.GearFill"></Icon>
+            </Tooltip>
+        </NavLink>
+        <ThemeSwitcher Class="ps-3 ps-lg-2" Position="DropdownMenuPosition.End"/>
+    </HeaderSection>
 
-    <main>
-        <div class="top-row px-4">
-            <Dropdown Color="DropdownColor.Secondary">
-                <DropdownToggleButton>Dropdown button</DropdownToggleButton>
-                <DropdownMenu>
-                    <DropdownItem To="#" Type="DropdownItemType.Link">Action</DropdownItem>
-                    <DropdownItem To="#" Type="DropdownItemType.Link">Another action</DropdownItem>
-                    <DropdownItem To="#" Type="DropdownItemType.Link">Something else here</DropdownItem>
-                </DropdownMenu>
-            </Dropdown>
-            <a href="" target="_blank">Admin</a>
-        </div>
+    <SidebarSection>
+        <Sidebar2 Href="/"
+                  ImageSrc="https://demos.blazorbootstrap.com/images/logo/logo-white.svg"
+                  Title="Blazor Bootstrap"
+                  BadgeText="3.2.0"
+                  DataProvider="Sidebar2DataProvider"
+                  WidthUnit="Unit.Px" />
+    </SidebarSection>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+    <ContentSection>
+        @Body
+    </ContentSection>
+</BlazorBootstrapLayout>
+
+@code {
+    private IEnumerable<NavItem> navItems = default!;
+
+    private async Task<Sidebar2DataProviderResult> Sidebar2DataProvider(Sidebar2DataProviderRequest request)
+    {
+        navItems ??= GetNavItems();
+
+        return await Task.FromResult(request.ApplyTo(navItems));
+    }
+
+    private IEnumerable<NavItem> GetNavItems()
+    {
+        navItems = new List<NavItem>
+        {
+            new() { Id = "1", Href = "/", Text = "Home", Match=NavLinkMatch.All},
+            new() { Id = "2", Href = "/projects", Text = "Projects"},
+            new() { Id = "3", Href = "/estimations", Text = "Estimations"},
+            new() { Id = "4", Href = "/quotations", Text = "Quotations"},
+            new() { Id = "5", Href = "/purchase-orders", Text = "Purchase Orders"},
+            new() { Id = "6", Href = "/invoices", Text = "Invoices"},
+            new() { Id = "7", Href = "/customers", Text = "Customers"},
+        };
+
+        return navItems;
+    }
+}
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
